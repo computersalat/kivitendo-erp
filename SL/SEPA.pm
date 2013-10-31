@@ -52,7 +52,8 @@ sub retrieve_open_invoices {
 
          COALESCE(vc.iban, '') <> '' AND COALESCE(vc.bic, '') <> '', vc.direct_debit <> ${tf} ${mandate} AS vc_bank_info_ok,
 
-         ${arap}.amount - ${arap}.paid - COALESCE(open_transfers.amount, 0) AS open_amount
+         ${arap}.amount - ${arap}.paid - COALESCE(open_transfers.amount, 0) AS open_amount,
+         pt.description as pt_description
 
        FROM ${arap}
        LEFT JOIN ${vc} vc ON (${arap}.${vc}_id = vc.id)
