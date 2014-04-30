@@ -65,7 +65,7 @@ sub bank_transfer_add {
 
     # Check due date for SEPA bank collections.
     if ((DateTime->from_kivitendo($invoice->{duedate}) < $current_date) && ($vc eq 'customer')) {
-      $invoice->{vc_bank_info_ok} = '';
+      $invoice->{vc_bank_info_ok}   = '2' if  $invoice->{vc_bank_info_ok};
     }
   }
 
