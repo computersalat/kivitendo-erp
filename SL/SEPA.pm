@@ -69,7 +69,7 @@ sub retrieve_open_invoices {
        WHERE (${arap}.amount > (COALESCE(open_transfers.amount, 0) + ${arap}.paid))
          AND (${arap}.direct_debit <> ${tf})
 
-       ORDER BY lower(vc.name) ASC, lower(${arap}.invnumber) ASC
+       ORDER BY ${arap}.duedate ASC, lower(vc.name) ASC, lower(${arap}.invnumber) ASC
 |;
 
   my $results = selectall_hashref_query($form, $dbh, $query);
