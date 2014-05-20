@@ -1134,6 +1134,16 @@ sub post_transaction {
     $form->error($err[$errno]);
   }
   undef($form->{callback});
+
+  for my $i (1 .. $form->{rowcount}) {
+    next if $form->{"debit_$i"} eq "" && $form->{"credit_$i"} eq "";
+
+    for (qw(debit credit tax)) {
+      $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"});
+    }
+  }
+
+
   # saving the history
   if(!exists $form->{addition} && $form->{id} ne "") {
     $form->{snumbers} = qq|gltransaction_| . $form->{id};
