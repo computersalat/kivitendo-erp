@@ -698,7 +698,7 @@ SQL
   $netamount = $form->round_amount($netamount, 2);
 
   if ($form->{currency} eq $form->{defaultcurrency}) {
-    $form->{exchangerate} = 1;
+    $exchangerate = 1;
   } else {
     $exchangerate = $form->check_exchangerate($myconfig, $form->{currency}, $form->{transdate}, ($form->{vc} eq 'customer') ? 'buy' : 'sell');
   }
