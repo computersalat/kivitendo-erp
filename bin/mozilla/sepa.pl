@@ -57,6 +57,10 @@ sub bank_transfer_add {
     my $prefix                    = $translations{ $invoice->{language_id} } || $translations{default} || $::locale->text('Invoice');
     $prefix                      .= ' ' unless $prefix =~ m/ $/;
     $invoice->{reference_prefix}  = $prefix;
+    my $vc_prefix                 = $invoice->{vc_number} eq '' ? ''
+                                  : $vc eq 'customer'           ? $translations{ $invoice->{language_id} } || $translations{default} || ' ' . $::locale->text('Ven.nr.')  . ' '
+                                  :                               $translations{ $invoice->{language_id} } || $translations{default} || ' ' . $::locale->text('Cust.nr.') . ' ';
+    $invoice->{vc_prefix}         = $vc_prefix;
   }
 
   $form->header();
