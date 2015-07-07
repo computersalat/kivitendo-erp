@@ -79,6 +79,7 @@
    <input class="submit" type="submit" name="action_e_mail" value="[% 'E-mail' | $T8 %]" data-require-transaction-description="[% INSTANCE_CONF.get_require_transaction_description_ps %]">
    [%- UNLESS delivered %]
    <input class="submit" type="submit" name="action_save" value="[% 'Save' | $T8 %]" data-require-transaction-description="[% INSTANCE_CONF.get_require_transaction_description_ps %]">
+   [%- IF id %]
    [%- IF vc == 'customer' %]
    <input class="submit" type="submit" name="action_transfer_out" value="[% 'Transfer out' | $T8 %]" data-check-transfer-qty="1" data-require-transaction-description="[% INSTANCE_CONF.get_require_transaction_description_ps %]">
    [% IF transfer_default %]
@@ -88,6 +89,7 @@
    <input class="submit" type="submit" name="action_transfer_in" value="[% 'Transfer in' | $T8 %]" data-check-transfer-qty="1" data-require-transaction-description="[% INSTANCE_CONF.get_require_transaction_description_ps %]">
    [% IF transfer_default %]
    <input class="submit" type="submit" name="action_transfer_in_default" value="[% 'Transfer in via default' | $T8 %]" data-require-transaction-description="[% INSTANCE_CONF.get_require_transaction_description_ps %]">
+   [%- END %]
    [%- END %]
    [%- END %]
    [%- END %]
