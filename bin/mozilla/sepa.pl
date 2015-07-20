@@ -69,6 +69,8 @@ sub bank_transfer_add {
     }
   }
 
+  $::request->layout->use_javascript('js/kivi.Sepa.js');
+
   $form->header();
   print $form->parse_html_template('sepa/bank_transfer_add',
                                    { 'INVOICES'           => $invoices,
