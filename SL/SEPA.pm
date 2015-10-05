@@ -50,7 +50,7 @@ sub retrieve_open_invoices {
          vc.name AS vcname, vc.language_id, ${arap}.duedate as duedate, ${arap}.direct_debit,
          vc.${vcnumber} AS vc_number,
 
-         COALESCE(vc.iban, '') <> '' AND COALESCE(vc.bic, '') <> '', vc.direct_debit <> ${tf} ${mandate} AS vc_bank_info_ok,
+         COALESCE(vc.iban, '') <> '' AND COALESCE(vc.bic, '') <> '' AND vc.direct_debit <> ${tf} ${mandate} AS vc_bank_info_ok,
 
          ${arap}.amount - ${arap}.paid - COALESCE(open_transfers.amount, 0) AS open_amount,
          pt.description as pt_description
