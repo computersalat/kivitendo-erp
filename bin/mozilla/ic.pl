@@ -897,12 +897,32 @@ sub form_header {
 
   $::request->layout->use_javascript("${_}.js") for qw(ckeditor/ckeditor ckeditor/adapters/jquery kivi.PriceRule);
   $::request->layout->add_javascripts_inline("\$(function(){kivi.PriceRule.load_price_rules_for_part(@{[ $::form->{id} * 1 ]})});") if $::form->{id};
+
+  for my $bar ($::request->layout->get('actionbar')) {
+    $bar->add_actions([ t8('Update'),
+      submit => [ '#form', { action => 'update' } ],
+    ]);
+    $bar->add_actions('combobox');
+    $bar->actions->[-1]->add_actions([ t8('Save'),
+      submit => [ '#form', { action => 'save' } ],
+    ]);
+    $bar->actions->[-1]->add_actions([ t8('Save as new'),
+      submit => [ '#form', { action_save         => 1 } ],
+      disabled => !$::form->{id} || $::form->{previousform},
+    ]);
+    $bar->add_actions([ t8('Delete'),
+      submit => [ '#form', { action => 'save_as_new' } ],
+      disabled => !$::form->{orphaned} || $::form->{previousform} || ($::form->{onhand} && $::form->{assembly}),
+      confirm  => t8('Do you really want to delete this object?'),
+    ]);
+    $bar->add_actions('separator');
+    $bar->add_actions([ t8('History'),
+      call     => [ 'set_history_window', $::form->{id} * 1, 'id' ],
+      disabled => !$::form->{id},
+    ]);
+  }
+
   $form->header;
-  #print $form->parse_html_template('ic/form_header', { ALL_PRICE_FACTORS => $form->{ALL_PRICE_FACTORS},
-  #                                                     ALL_UNITS         => $form->{ALL_UNITS},
-  #                                                     BUCHUNGSGRUPPEN   => $form->{BUCHUNGSGRUPPEN},
-  #                                                     payment_terms     => $form->{payment_terms},
-  #                                                     all_partsgroup    => $form->{all_partsgroup}});
 
   $form->{show_edit_buttons} = $main::auth->check_right($::myconfig{login}, 'part_service_assembly_edit');
 

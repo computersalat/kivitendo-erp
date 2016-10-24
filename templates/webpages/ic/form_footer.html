@@ -68,32 +68,8 @@
 
 [%- IF show_edit_buttons %]
 
-<input class="submit" type="submit" name="action" value="[% 'Update' | $T8 %]">
 <input type="hidden" name="price_rows" value="[% HTML.escape(price_rows) %]">
-<input class="submit" type="submit" name="action" value="[% 'Save' | $T8 %]">
-
-  [%- IF id %]
-    [%- UNLESS previousform %]
-<input class="submit" type="submit" name="action" value="[% 'Save as new' | $T8 %]">
-    [%- END %]
-
-    [%- IF orphaned %]
-      [%- UNLESS previousform %]
-        [%- IF item == 'assembly' %]
-          [%- UNLESS onhand %]
-<input class="submit" type="submit" name="action" value="[% 'Delete' | $T8 %]">
-          [%- END %]
-        [%- ELSE %]
-<input class="submit" type="submit" name="action" value="[% 'Delete' | $T8 %]">
-        [%- END %]
-      [%- END %]
-    [%- END %]
-  [%- END %]
 
 [%- END %]
-
-  [%- IF id != "" %]
-<input type="button" class="submit" onclick="set_history_window([% id %], 'id');" name="history" id="history" value="[% 'history' | $T8 %]">
-  [%- END %]
 
 </form>
