@@ -856,19 +856,25 @@ sub setup_ic_action_bar {
     ]);
     $bar->actions->[-1]->add_actions([ t8('Save as new'),
       submit   => [ '#form', { action_save => 1 } ],
-      disabled => !$::form->{id} || $::form->{previousform},
+      disabled => !$::form->{id}          ? t8('This part has not been saved yet.')
+                : $::form->{previousform} ? t8('This function cannot be used while in a nested edit session for parts.')
+                :                           undef,
     ]);
     $bar->add_actions([ t8('Delete'),
       submit   => [ '#form', { action => 'save_as_new' } ],
-      disabled => !$::form->{orphaned} || $::form->{previousform} || ($::form->{onhand} && $::form->{assembly}),
       confirm  => t8('Do you really want to delete this object?'),
+      disabled => !$::form->{id}                           ? t8('This part has not been saved yet.')
+                : !$::form->{orphaned}                     ? t8('This part has already been used.')
+                : $::form->{onhand} && $::form->{assembly} ? t8('This assembly is still on stock.')
+                : $::form->{previousform}                  ? t8('This function cannot be used while in a nested edit session for parts.')
+                :                                            undef,
     ]);
 
     $bar->add_actions('separator');
 
     $bar->add_actions([ t8('History'),
       call     => [ 'set_history_window', $::form->{id} * 1, 'id' ],
-      disabled => !$::form->{id},
+      disabled => !$::form->{id} ? t8('This part has not been saved yet.') : undef,
     ]);
   }
 }
