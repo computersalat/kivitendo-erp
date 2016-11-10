@@ -844,38 +844,47 @@ sub link_part {
 
 sub setup_ic_action_bar {
   for my $bar ($::request->layout->get('actionbar')) {
-    $bar->add_actions([ t8('Update'),
-      submit    => [ '#form', { action => 'update' } ],
-      id        => 'update_button',
-      accesskey => 'enter',
-    ]);
+    $bar->add(
+      action => [
+        t8('Update'),
+        submit    => [ '#form', { action => 'update' } ],
+        id        => 'update_button',
+        accesskey => 'enter',
+      ],
 
-    $bar->add_actions('combobox');
-    $bar->actions->[-1]->add_actions([ t8('Save'),
-      submit => [ '#form', { action => 'save' } ],
-    ]);
-    $bar->actions->[-1]->add_actions([ t8('Save as new'),
-      submit   => [ '#form', { action_save => 1 } ],
-      disabled => !$::form->{id}          ? t8('This part has not been saved yet.')
-                : $::form->{previousform} ? t8('This function cannot be used while in a nested edit session for parts.')
-                :                           undef,
-    ]);
-    $bar->add_actions([ t8('Delete'),
-      submit   => [ '#form', { action => 'save_as_new' } ],
-      confirm  => t8('Do you really want to delete this object?'),
-      disabled => !$::form->{id}                           ? t8('This part has not been saved yet.')
-                : !$::form->{orphaned}                     ? t8('This part has already been used.')
-                : $::form->{onhand} && $::form->{assembly} ? t8('This assembly is still on stock.')
-                : $::form->{previousform}                  ? t8('This function cannot be used while in a nested edit session for parts.')
-                :                                            undef,
-    ]);
+      combobox => [
+        action => [
+          t8('Save'),
+          submit => [ '#form', { action => 'save' } ],
+        ],
+        action => [
+          t8('Save as new'),
+          submit   => [ '#form', { action_save => 1 } ],
+          disabled => !$::form->{id}          ? t8('This part has not been saved yet.')
+                    : $::form->{previousform} ? t8('This function cannot be used while in a nested edit session for parts.')
+                    :                           undef,
+        ],
+      ], # end of combobox "save"
 
-    $bar->add_actions('separator');
+      action => [
+        t8('Delete'),
+        submit   => [ '#form', { action => 'save_as_new' } ],
+        confirm  => t8('Do you really want to delete this object?'),
+        disabled => !$::form->{id}                           ? t8('This part has not been saved yet.')
+                  : !$::form->{orphaned}                     ? t8('This part has already been used.')
+                  : $::form->{onhand} && $::form->{assembly} ? t8('This assembly is still on stock.')
+                  : $::form->{previousform}                  ? t8('This function cannot be used while in a nested edit session for parts.')
+                  :                                            undef,
+      ],
 
-    $bar->add_actions([ t8('History'),
-      call     => [ 'set_history_window', $::form->{id} * 1, 'id' ],
-      disabled => !$::form->{id} ? t8('This part has not been saved yet.') : undef,
-    ]);
+      'separator',
+
+      action => [
+        t8('History'),
+        call     => [ 'set_history_window', $::form->{id} * 1, 'id' ],
+        disabled => !$::form->{id} ? t8('This part has not been saved yet.') : undef,
+      ],
+    );
   }
 }
 
