@@ -22,6 +22,7 @@ __PACKAGE__->run_before('load_project_status', only => [ qw(edit update destroy)
 sub action_list {
   my ($self) = @_;
 
+  $self->setup_list_action_bar;
   $self->render('project_status/list',
                 title          => $::locale->text('Project Status'),
                 PROJECT_STATUS => SL::DB::Manager::ProjectStatus->get_all_sorted);
@@ -112,11 +113,11 @@ sub load_project_status {
 sub render_form {
   my ($self, %params) = @_;
 
-  $self->setup_action_bar;
+  $self->setup_form_action_bar;
   $self->render('project_status/form', %params);
 }
 
-sub setup_action_bar {
+sub setup_form_action_bar {
   my ($self) = @_;
 
   my $is_new = !$self->{project_status}->id;
@@ -138,6 +139,19 @@ sub setup_action_bar {
       link => [
         $::locale->text('Abort'),
         link => $self->url_for(action => 'list'),
+      ],
+    );
+  }
+}
+
+sub setup_list_action_bar {
+  my ($self) = @_;
+
+  for my $bar ($::request->layout->get('actionbar')) {
+    $bar->add(
+      link => [
+        $::locale->text('Add'),
+        link => $self->url_for(action => 'new'),
       ],
     );
   }
