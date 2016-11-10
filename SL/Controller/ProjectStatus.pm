@@ -31,12 +31,12 @@ sub action_new {
   my ($self) = @_;
 
   $self->{project_status} = SL::DB::ProjectStatus->new;
-  $self->render('project_status/form', title => $::locale->text('Create a new project status'));
+  $self->render_form(title => $::locale->text('Create a new project status'));
 }
 
 sub action_edit {
   my ($self) = @_;
-  $self->render('project_status/form', title => $::locale->text('Edit project status'));
+  $self->render_form(title => $::locale->text('Edit project status'));
 }
 
 sub action_create {
@@ -94,7 +94,7 @@ sub create_or_update {
 
   if (@errors) {
     flash('error', @errors);
-    $self->render('project_status/form', title => $is_new ? $::locale->text('Create a new project status') : $::locale->text('Edit project status'));
+    $self->render_form(title => $is_new ? $::locale->text('Create a new project status') : $::locale->text('Edit project status'));
     return;
   }
 
@@ -107,6 +107,40 @@ sub create_or_update {
 sub load_project_status {
   my ($self) = @_;
   $self->{project_status} = SL::DB::ProjectStatus->new(id => $::form->{id})->load;
+}
+
+sub render_form {
+  my ($self, %params) = @_;
+
+  $self->setup_action_bar;
+  $self->render('project_status/form', %params);
+}
+
+sub setup_action_bar {
+  my ($self) = @_;
+
+  my $is_new = !$self->{project_status}->id;
+
+  for my $bar ($::request->layout->get('actionbar')) {
+    $bar->add(
+      action => [
+        $::locale->text('Save'),
+        submit    => [ '#form', { action => 'ProjectStatus/' . ($is_new ? 'create' : 'update') } ],
+        accesskey => 'enter',
+      ],
+      action => [
+        $::locale->text('Delete'),
+        submit   => [ '#form', { action => 'ProjectStatus/destroy' } ],
+        confirm  => $::locale->text('Do you really want to delete this object?'),
+        disabled => $is_new ? $::locale->text('This object has not been saved yet.') : undef,
+      ],
+
+      link => [
+        $::locale->text('Abort'),
+        href => $self->url_for(action => 'list'),
+      ],
+    );
+  }
 }
 
 1;
