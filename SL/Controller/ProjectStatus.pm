@@ -137,7 +137,7 @@ sub setup_action_bar {
 
       link => [
         $::locale->text('Abort'),
-        href => $self->url_for(action => 'list'),
+        link => $self->url_for(action => 'list'),
       ],
     );
   }
