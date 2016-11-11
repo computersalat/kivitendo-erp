@@ -34,6 +34,21 @@ sub report_generator_set_default_sort {
 }
 
 
+sub report_generator_setup_action_bar {
+  my ($type) = @_;
+
+  $::request->layout->get('actionbar')->add(
+    action => [
+      $type eq 'pdf' ? $::locale->text('PDF export') : $::locale->text('CSV export'),
+      submit => [ '#report_generator_form', { 'report_generator_dispatch_to' => "report_generator_export_as_${type}" } ],
+    ],
+    action => [
+      $::locale->text('Back'),
+      submit => [ '#report_generator_form', { 'report_generator_dispatch_to' => "report_generator_back" } ],
+    ],
+  );
+}
+
 sub report_generator_export_as_pdf {
   $main::lxdebug->enter_sub();
 
@@ -68,6 +83,9 @@ sub report_generator_export_as_pdf {
   $allow_font_selection = 0 if ($@);
 
   $form->{title} = $locale->text('PDF export -- options');
+
+  report_generator_setup_action_bar('pdf');
+
   $form->header();
   print $form->parse_html_template('report_generator/pdf_export_options', { 'HIDDEN'               => \@form_values,
                                                                             'ALLOW_FONT_SELECTION' => $allow_font_selection, });
@@ -90,6 +108,9 @@ sub report_generator_export_as_csv {
   my @form_values = $form->flatten_variables(grep { ($_ ne 'login') && ($_ ne 'password') } keys %{ $form });
 
   $form->{title} = $locale->text('CSV export -- options');
+
+  report_generator_setup_action_bar('csv');
+
   $form->header();
   print $form->parse_html_template('report_generator/csv_export_options', { 'HIDDEN' => \@form_values });
 

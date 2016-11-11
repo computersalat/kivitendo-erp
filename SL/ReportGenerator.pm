@@ -2,6 +2,7 @@ package SL::ReportGenerator;
 
 use Data::Dumper;
 use List::Util qw(max);
+use Scalar::Util qw(blessed);
 use Text::CSV_XS;
 #use PDF::API2;    # these two eat up to .75s on startup. only load them if we actually need them
 #use PDF::Table;
@@ -230,12 +231,13 @@ sub generate_with_headers {
   }
 
   if ($format eq 'html') {
+    my $content    = $self->generate_html_content(%params);
     my $title      = $form->{title};
     $form->{title} = $self->{title} if ($self->{title});
     $form->header(no_layout => $params{no_layout});
     $form->{title} = $title;
 
-    print $self->generate_html_content();
+    print $content;
 
   } elsif ($format eq 'csv') {
     # FIXME: don't do mini http in here
@@ -273,7 +275,7 @@ sub html_format {
 }
 
 sub prepare_html_content {
-  my $self = shift;
+  my ($self, %params) = @_;
 
   my ($column, $name, @column_headers);
 
@@ -405,14 +407,47 @@ sub prepare_html_content {
     'DATA_PRESENT'         => $self->{data_present},
     'CONTROLLER_DISPATCH'  => $opts->{controller_class},
     'TABLE_CLASS'          => $opts->{table_class},
+    'SKIP_BUTTONS'         => !!$params{action_bar},
   };
 
   return $variables;
 }
 
+sub setup_action_bar {
+  my ($self, $action_bar, $variables) = @_;
+
+  my @actions;
+  foreach my $type (qw(pdf csv)) {
+    next unless $variables->{"ALLOW_" . uc($type) . "_EXPORT"};
+
+    my $key   = $variables->{CONTROLLER_DISPATCH} ? 'action' : 'report_generator_dispatch_to';
+    my $value = "report_generator_export_as_${type}";
+    $value    = $variables->{CONTROLLER_DISPATCH} . "/${value}" if $variables->{CONTROLLER_DISPATCH};
+
+    push @actions, action => [
+      $type eq 'pdf' ? $::locale->text('PDF export') : $::locale->text('CSV export'),
+      submit => [ '#report_generator_form', { $key => $value } ],
+    ];
+  }
+
+  if (scalar(@actions) > 1) {
+    @actions = (
+      combobox => [
+        action => [ $::locale->text('Export') ],
+        @actions,
+      ],
+    );
+  }
+
+  $action_bar = ($::request->layout->get('actionbar'))[0] unless blessed($action_bar);
+  $action_bar->add(@actions) if @actions;
+}
+
 sub generate_html_content {
-  my $self      = shift;
-  my $variables = $self->prepare_html_content();
+  my ($self, %params) = @_;
+  my $variables = $self->prepare_html_content(%params);
+
+  $self->setup_action_bar($params{action_bar}, $variables) if $params{action_bar};
 
   my $stuff  = $self->{form}->parse_html_template($self->{options}->{html_template}, $variables);
   return $stuff;
