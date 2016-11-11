@@ -95,6 +95,7 @@ namespace("kivi").setupLocale({
 "Update quotation/order":"Auftrag/Angebot aktualisieren",
 "Version actions":"Aktionen für Versionen",
 "Yes":"Ja",
+"You have not selected any delivery order.":"Sie haben keinen Lieferschein ausgewählt.",
 "flat-rate position":"Pauschalposition",
 "sort items":"Positionen sortieren",
 "time and effort based position":"Aufwandsposition"
